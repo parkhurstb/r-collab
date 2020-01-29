@@ -7,5 +7,29 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+
+library(tidyverse) # install.packages("tidyverse")
+library(here) # install.packages("here")
+library(janitor) # install.packages("janitor")
+
+```
+
+Read in noaa_landings.csv
+
+```{r}
+us_landings = read_csv(here("data", "noaa_landings.csv"), 
+                       na = c("no data"))
+```
+
+Clean up column names:
+
+```{r}
+salmon_clean <- us_landings %>% 
+  clean_names() %>%
+  mutate(afs_name = str_to_lower(afs_name)) %>% 
+  mutate(dollars_numeric = parse_number(dollars_usd)) %>% 
+  filter(str_detect(afs_name, pattern = "salmon")) %>% 
+  separate(afs_name, c("group", "subgroup"), sep = ", ") %>%           # identifies identifier as comma + space
+  drop_na(dollars_numeric)
 ```
 
