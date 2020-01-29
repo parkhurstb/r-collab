@@ -55,6 +55,7 @@ ggplot(data = salmon_us_annual, aes(x = year, y = tot_value, group = subgroup)) 
               
 ```
 
+![](https://octodex.github.com/images/Robotocat.png)
 
 
 
