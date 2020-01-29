@@ -57,5 +57,7 @@ ggplot(salmon_us_annual, aes(x = year,
 
 # colorblindr	OkabeIto
 
-```
 
+
+```
+![](https://octodex.github.com/images/foundingfather_v2.png)
