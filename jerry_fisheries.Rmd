@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 library(tidyverse) # install.packages("tidyverse")
 library(here) # install.packages("here")
 library(janitor) # install.packages("janitor")
+library(paletteer) # install.packages("paletteer")
 
 ```
 
@@ -31,5 +32,30 @@ salmon_clean <- us_landings %>%
   filter(str_detect(afs_name, pattern = "salmon")) %>% 
   separate(afs_name, c("group", "subgroup"), sep = ", ") %>%           # identifies identifier as comma + space
   drop_na(dollars_numeric)
+```
+
+### Annual total value by salmon subgroup
+
+```{r}
+salmon_us_annual <-salmon_clean %>% 
+  group_by(year, subgroup) %>%
+  summarize(total_value = sum(dollars_numeric))
+```
+
+### Make a line graph
+
+```{r}
+ggplot(salmon_us_annual, aes(x = year,
+                             y = total_value,
+                             group = subgroup)) +
+  geom_line(aes(color = subgroup)) +
+  theme_bw() +
+  labs(x = "Year",
+       y = "US commercial salmon value (USD)",
+       title = "Annual US Salmon Landings") +
+  scale_color_paletteer_d("colorblindr::OkabeIto")
+
+# colorblindr	OkabeIto
+
 ```
 
