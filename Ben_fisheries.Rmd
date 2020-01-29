@@ -1,0 +1,60 @@
+---
+title: "Ben'_Fisheries's Analysis"
+author: "Ben Parkhurst"
+date: "January 28, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(readr)
+library(paletteer)
+```
+Read in noaa_landings.csv
+
+```{r}
+us_landings <- read_csv(here("data","noaa_landings.csv"),
+                        na = "no data")
+```
+
+Let's clean up the column names:
+```{r}
+salmon_clean <- us_landings %>% 
+  clean_names() %>% 
+  mutate(afs_name = str_to_lower(afs_name)) %>% 
+  mutate(dollars_num = parse_number(dollars_usd)) %>% 
+  filter(str_detect(afs_name, pattern = "salmon")) %>% 
+  separate(afs_name, into = c("salon_group" , "subgroup"), sep = ", ") %>% 
+  drop_na(dollars_num)
+```
+###Annual total value by salmon subgroup
+```{r}
+
+salmon_us_annual <- salmon_clean %>% 
+  group_by(year,subgroup) %>%
+  summarize(
+    tot_value =  sum(dollars_num, na.rm = TRUE))
+
+```
+Try to make a linegraph with salmon_us_annual with year on x axis and tot_value
+
+```{r}
+ggplot(data = salmon_us_annual, aes(x = year, y = tot_value, group = subgroup)) +
+  geom_line(aes(color = subgroup)) + 
+              theme_classic() +
+              labs(x = "year",
+                   y ="US commercial salmon value (USD)",
+                   title = "Graph") +
+              scale_color_paletteer_d("calecopal::figmtn")
+            
+              
+              
+```
+
+
+
+
